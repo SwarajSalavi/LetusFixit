@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Directory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --accent-color: #fbbc05;
+            --text-color: #333;
+            --light-gray: #f8f9fa;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .filter-section {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+            appearance: none;
+            background-color: white;
+            font-size: 1rem;
+            color: var(--text-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+        }
+        
+        .select-icon {
+            position: absolute;
+            right: 15px;
+            top: 14px;
+            color: var(--primary-color);
+            pointer-events: none;
+        }
+        
+        .directory-list {
+            list-style: none;
+        }
+        
+        .directory-item {
+            padding: 18px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            background-color: var(--light-gray);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .directory-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .service-name {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .category-badge {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .service-details {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .detail-icon {
+            color: var(--primary-color);
+            margin-right: 8px;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .contact-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 18px;
+            background-color: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(37, 211, 102, 0.3);
+        }
+        
+        .contact-button:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(37, 211, 102, 0.4);
+        }
+        
+        .whatsapp-icon {
+            margin-right: 6px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        
+        @media (max-width: 600px) {
+            .service-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Service Directory</h1>
+            <p class="subtitle">Find reliable professionals for your needs</p>
+        </header>
+        
+        <div class="filter-section">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="Plumber">Plumber</option>
+                <option value="Electrician">Electrician</option>
+                <option value="Carpenter">Carpenter</option>
+                <option value="Painter">Painter</option>
+                <option value="Mechanic">Mechanic</option>
+            </select>
+            <span class="select-icon"><i class="fas fa-chevron-down"></i></span>
+        </div>
+        
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin"></i> Loading services...
+        </div>
+        <ul id="directoryList" class="directory-list"></ul>
+    </div>
+    
+    <script>
+        // Store fetched data globally
+        let servicesData = [];
+        
+        // Function to fetch data directly from the API
+        function fetchData() {
+            document.getElementById("loading").style.display = "block";
+            
+            // Create XMLHttpRequest - this helps avoid CORS issues in some cases
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://script.google.com/macros/s/AKfycbyFkpfHGu6OBN8hqEZt16DSd2XFvFumM-KgsdZMi5zS-U0hTXTEcqP9rWrcR7U9klTA8A/exec", true);
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    document.getElementById("loading").style.display = "none";
+                    
+                    if (xhr.status == 200) {
+                        try {
+                            servicesData = JSON.parse(xhr.responseText);
+                            renderList(servicesData, document.getElementById("categoryFilter").value);
+                        } catch (e) {
+                            console.error("Error parsing JSON:", e);
+                            document.getElementById("directoryList").innerHTML = `
+                                <div class="no-results">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <p>Error processing data. Please try again later.</p>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        console.error("Error fetching data:", xhr.status);
+                        document.getElementById("directoryList").innerHTML = `
+                            <div class="no-results">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <p>Error loading service data. Please try again later.</p>
+                            </div>
+                        `;
+                    }
+                }
+            };
+            
+            xhr.onerror = function() {
+                document.getElementById("loading").style.display = "none";
+                console.error("Request failed");
+                document.getElementById("directoryList").innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Connection error. Please check your internet connection and try again.</p>
+                    </div>
+                `;
+            };
+            
+            xhr.send();
+        }
+        
+        function getCategoryIcon(category) {
+            const icons = {
+                'Plumber': 'fa-wrench',
+                'Electrician': 'fa-bolt',
+                'Carpenter': 'fa-hammer',
+                'Painter': 'fa-paint-roller',
+                'Mechanic': 'fa-car'
+            };
+            return icons[category] || 'fa-user-tie';
+        }
+        
+        function createWhatsAppLink(phoneNumber) {
+            // Remove any non-numeric characters
+            const cleanNumber = phoneNumber.toString().replace(/\D/g, '');
+            return `https://wa.me/${cleanNumber}`;
+        }
+        
+        function renderList(data, filter = "") {
+            const list = document.getElementById("directoryList");
+            list.innerHTML = "";
+            
+            const filteredData = data.filter(item => filter === "" || item.category === filter);
+            
+            if (filteredData.length === 0) {
+                list.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <p>No services found in this category. Please try another category.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredData.forEach(service => {
+                const li = document.createElement("li");
+                li.classList.add("directory-item");
+                
+                const categoryIcon = getCategoryIcon(service.category);
+                const whatsappLink = createWhatsAppLink(service.contactNo);
+                
+                li.innerHTML = `
+                    <div class="service-name">
+                        <div>
+                            <i class="fas ${categoryIcon}"></i>
+                            ${service.name}
+                        </div>
+                        <span class="category-badge">${service.category}</span>
+                    </div>
+                    
+                    <div class="service-details">
+                        <div>
+                            <div class="detail-item">
+                                <span class="detail-icon"><i class="fas fa-star"></i></span>
+                                <span>Experience: ${service.experience} years</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon"><i class="fas fa-rupee-sign"></i></span>
+                                <span>Charge: ₹${service.visitingCharge}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="detail-item">
+                                <span class="detail-icon"><i class="fas fa-map-marker-alt"></i></span>
+                                <span>${service.address}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon"><i class="fas fa-phone-alt"></i></span>
+                                <span>${service.contactNo}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="${whatsappLink}" class="contact-button" target="_blank">
+                        <i class="fab fa-whatsapp whatsapp-icon"></i>Contact on WhatsApp
+                    </a>
+                `;
+                
+                list.appendChild(li);
+            });
+        }
+        
+        document.getElementById("categoryFilter").addEventListener("change", function() {
+            const filter = this.value;
+            // Use the already fetched data for filtering
+            renderList(servicesData, filter);
+        });
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchData();
+        });
+    </script>
+</body>
+</html>
