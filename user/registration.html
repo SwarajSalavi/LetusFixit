@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Let's Fix It - Login</title>
+    <title>Let's Fix It - Registration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -14,7 +15,6 @@
             --light-gray: #f8f9fa;
             --border-radius: 8px;
             --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --error-color: #ea4335;
         }
 
         * {
@@ -33,13 +33,13 @@
             padding: 20px;
         }
 
-        .login-container {
+        .registration-container {
             background: white;
             padding: 30px;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             text-align: center;
         }
 
@@ -95,10 +95,10 @@
             box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
         }
 
-        .login-btn {
+        .register-btn {
             width: 100%;
             padding: 14px;
-            background: var(--primary-color);
+            background: var(--secondary-color);
             color: white;
             border: none;
             border-radius: var(--border-radius);
@@ -108,8 +108,8 @@
             transition: background-color 0.3s;
         }
 
-        .login-btn:hover {
-            background: #3367d6;
+        .register-btn:hover {
+            background: #2d9348;
         }
 
         .success-message {
@@ -122,69 +122,70 @@
             margin-top: 20px;
             font-weight: 600;
         }
-        
-        .error-message {
-            display: none;
-            background-color: var(--error-color);
-            color: white;
-            padding: 16px;
-            border-radius: var(--border-radius);
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
 
-        .register-link {
+        .login-link {
             margin-top: 20px;
             color: var(--text-color);
         }
 
-        .register-link a {
+        .login-link a {
             color: var(--primary-color);
             text-decoration: none;
             font-weight: 600;
         }
 
-        .register-link a:hover {
+        .login-link a:hover {
             text-decoration: underline;
         }
-        
-        .forgot-password {
-            text-align: right;
-            margin-top: -10px;
-            margin-bottom: 15px;
-        }
-        
-        .forgot-password a {
+
+        .password-requirements {
+            font-size: 0.8rem;
             color: #666;
-            font-size: 0.9rem;
-            text-decoration: none;
+            margin-top: 5px;
         }
-        
-        .forgot-password a:hover {
-            color: var(--primary-color);
-            text-decoration: underline;
+
+        .terms {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .terms input {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="registration-container">
         <div class="logo">
             <i class="fas fa-tools"></i>
         </div>
-        <h2>Let's Fix It</h2>
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-circle"></i> User not registered. Please create an account.
-        </div>
+        <h2>Create Account</h2>
         <div id="successMessage" class="success-message">
-            <i class="fas fa-check-circle"></i> Login successful! Redirecting...
+            <i class="fas fa-check-circle"></i> Registration successful! Redirecting to login...
         </div>
-        <form id="loginForm">
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="fullname" placeholder="Enter your full name" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+            </div>
+            
             <div class="form-group">
                 <label for="username">Username</label>
                 <div class="input-icon">
-                    <i class="fas fa-user"></i>
-                    <input type="text" id="username" placeholder="Enter your username" required>
+                    <i class="fas fa-at"></i>
+                    <input type="text" id="username" placeholder="Choose a username" required>
                 </div>
             </div>
             
@@ -192,64 +193,71 @@
                 <label for="password">Password</label>
                 <div class="input-icon">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="Enter your password" required>
+                    <input type="password" id="password" placeholder="Create a password" required>
+                </div>
+                <p class="password-requirements">Password must be at least 8 characters with letters, numbers, and symbols</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
                 </div>
             </div>
             
-            <div class="forgot-password">
-                <a href="#">Forgot password?</a>
+            <div class="terms">
+                <input type="checkbox" id="terms" required>
+                <label for="terms">I agree to the Terms of Service and Privacy Policy</label>
             </div>
             
-            <button type="button" class="login-btn" onclick="loginUser()">
-                <i class="fas fa-sign-in-alt"></i> Login
+            <button type="button" class="register-btn" onclick="registerUser()">
+                <i class="fas fa-user-plus"></i> Create Account
             </button>
         </form>
         
-        <p class="register-link">
-            Don't have an account? <a href="registration.html">Register</a>
+        <p class="login-link">
+            Already have an account? <a href="login.html">Login</a>
         </p>
     </div>
     
     <script>
-        // Mock database of registered users (in a real app this would be server-side)
-        const registeredUsers = [
-            { username: "demo", password: "password123" },
-            { username: "user1", password: "user1pass" }
-        ];
-        
-        function loginUser() {
+        function registerUser() {
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const terms = document.getElementById('terms').checked;
             
-            // Check if fields are not empty
-            if (username.trim() !== '' && password.trim() !== '') {
-                // Check if user exists
-                const userExists = registeredUsers.some(
-                    user => user.username === username && user.password === password
-                );
-                
-                if (userExists) {
-                    // Show success message
-                    document.getElementById('errorMessage').style.display = 'none';
-                    document.getElementById('successMessage').style.display = 'block';
-                    
-                    // Redirect after 2 seconds (to simulate loading)
-                    setTimeout(() => {
-                        window.location.href = 'directory.html';
-                    }, 2000);
-                } else {
-                    // Show error message for non-registered user
-                    document.getElementById('errorMessage').style.display = 'block';
-                    document.getElementById('successMessage').style.display = 'none';
-                    
-                    // Focus on register link (optional visual cue)
-                    setTimeout(() => {
-                        document.querySelector('.register-link a').focus();
-                    }, 100);
-                }
-            } else {
-                alert('Please enter both username and password');
+            // Basic validation
+            if (!fullname || !email || !username || !password || !confirmPassword) {
+                alert('Please fill in all fields');
+                return;
             }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters long');
+                return;
+            }
+            
+            if (!terms) {
+                alert('You must agree to the Terms of Service and Privacy Policy');
+                return;
+            }
+            
+            // Show success message
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Redirect to login page after 2 seconds
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
         }
     </script>
 </body>

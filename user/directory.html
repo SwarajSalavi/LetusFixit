@@ -59,13 +59,18 @@
         
         .filter-section {
             margin-bottom: 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .filter-container {
             position: relative;
         }
         
-        select {
+        select, input {
             width: 100%;
             padding: 12px 15px;
-            margin-bottom: 20px;
             border-radius: var(--border-radius);
             border: 1px solid #ddd;
             appearance: none;
@@ -74,10 +79,13 @@
             color: var(--text-color);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
+        }
+        
+        select {
             cursor: pointer;
         }
         
-        select:focus {
+        select:focus, input:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
@@ -147,26 +155,48 @@
             text-align: center;
         }
         
-        .contact-button {
-            display: inline-block;
+        .action-buttons {
+            display: flex;
+            gap: 10px;
             margin-top: 15px;
+        }
+        
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             padding: 8px 18px;
-            background-color: #25D366;
             color: white;
             text-decoration: none;
             border-radius: 20px;
             font-weight: 500;
             transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .whatsapp-button {
+            background-color: #25D366;
             box-shadow: 0 2px 5px rgba(37, 211, 102, 0.3);
         }
         
-        .contact-button:hover {
+        .whatsapp-button:hover {
             background-color: #128C7E;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(37, 211, 102, 0.4);
         }
         
-        .whatsapp-icon {
+        .call-button {
+            background-color: #4285f4;
+            box-shadow: 0 2px 5px rgba(66, 133, 244, 0.3);
+        }
+        
+        .call-button:hover {
+            background-color: #3367d6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(66, 133, 244, 0.4);
+        }
+        
+        .button-icon {
             margin-right: 6px;
         }
         
@@ -183,6 +213,10 @@
         }
         
         @media (max-width: 600px) {
+            .filter-section {
+                grid-template-columns: 1fr;
+            }
+            
             .service-details {
                 grid-template-columns: 1fr;
             }
@@ -193,6 +227,10 @@
             
             h1 {
                 font-size: 1.8rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
             }
         }
     </style>
@@ -205,15 +243,22 @@
         </header>
         
         <div class="filter-section">
-            <select id="categoryFilter">
-                <option value="">All Categories</option>
-                <option value="Plumber">Plumber</option>
-                <option value="Electrician">Electrician</option>
-                <option value="Carpenter">Carpenter</option>
-                <option value="Painter">Painter</option>
-                <option value="Mechanic">Mechanic</option>
-            </select>
-            <span class="select-icon"><i class="fas fa-chevron-down"></i></span>
+            <div class="filter-container">
+                <select id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Carpenter">Carpenter</option>
+                    <option value="Painter">Painter</option>
+                    <option value="Mechanic">Mechanic</option>
+                </select>
+                <span class="select-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            
+            <div class="filter-container">
+                <input type="text" id="addressFilter" placeholder="Filter by address">
+                <span class="select-icon"><i class="fas fa-search"></i></span>
+            </div>
         </div>
         
         <div id="loading" class="loading">
@@ -241,7 +286,7 @@
                     if (xhr.status == 200) {
                         try {
                             servicesData = JSON.parse(xhr.responseText);
-                            renderList(servicesData, document.getElementById("categoryFilter").value);
+                            renderList(servicesData);
                         } catch (e) {
                             console.error("Error parsing JSON:", e);
                             document.getElementById("directoryList").innerHTML = `
@@ -289,22 +334,41 @@
         }
         
         function createWhatsAppLink(phoneNumber) {
-            // Remove any non-numeric characters
+            // Remove any non-numeric characters and ensure it has the +91 prefix
             const cleanNumber = phoneNumber.toString().replace(/\D/g, '');
-            return `https://wa.me/${cleanNumber}`;
+            const formattedNumber = cleanNumber.startsWith('91') ? cleanNumber : '91' + cleanNumber;
+            
+            // Add a default message
+            const message = encodeURIComponent("Hello, I found your contact from the LetUsFix Directory and would like to inquire about your services.");
+            
+            return `https://wa.me/+${formattedNumber}?text=${message}`;
         }
         
-        function renderList(data, filter = "") {
+        function createCallLink(phoneNumber) {
+            // Remove any non-numeric characters
+            const cleanNumber = phoneNumber.toString().replace(/\D/g, '');
+            return `tel:+91${cleanNumber}`;
+        }
+        
+        function renderList(data) {
             const list = document.getElementById("directoryList");
             list.innerHTML = "";
             
-            const filteredData = data.filter(item => filter === "" || item.category === filter);
+            const categoryFilter = document.getElementById("categoryFilter").value;
+            const addressFilter = document.getElementById("addressFilter").value.toLowerCase();
+            
+            const filteredData = data.filter(item => {
+                const matchesCategory = categoryFilter === "" || item.category === categoryFilter;
+                const matchesAddress = addressFilter === "" || 
+                    (item.address && item.address.toLowerCase().includes(addressFilter));
+                return matchesCategory && matchesAddress;
+            });
             
             if (filteredData.length === 0) {
                 list.innerHTML = `
                     <div class="no-results">
                         <i class="fas fa-search"></i>
-                        <p>No services found in this category. Please try another category.</p>
+                        <p>No services found with the current filters. Please try different criteria.</p>
                     </div>
                 `;
                 return;
@@ -316,6 +380,7 @@
                 
                 const categoryIcon = getCategoryIcon(service.category);
                 const whatsappLink = createWhatsAppLink(service.contactNo);
+                const callLink = createCallLink(service.contactNo);
                 
                 li.innerHTML = `
                     <div class="service-name">
@@ -349,19 +414,27 @@
                         </div>
                     </div>
                     
-                    <a href="${whatsappLink}" class="contact-button" target="_blank">
-                        <i class="fab fa-whatsapp whatsapp-icon"></i>Contact on WhatsApp
-                    </a>
+                    <div class="action-buttons">
+                        <a href="${whatsappLink}" class="action-button whatsapp-button" target="_blank">
+                            <i class="fab fa-whatsapp button-icon"></i>WhatsApp
+                        </a>
+                        <a href="${callLink}" class="action-button call-button">
+                            <i class="fas fa-phone-alt button-icon"></i>Call Now
+                        </a>
+                    </div>
                 `;
                 
                 list.appendChild(li);
             });
         }
         
+        // Event listeners for filters
         document.getElementById("categoryFilter").addEventListener("change", function() {
-            const filter = this.value;
-            // Use the already fetched data for filtering
-            renderList(servicesData, filter);
+            renderList(servicesData);
+        });
+        
+        document.getElementById("addressFilter").addEventListener("input", function() {
+            renderList(servicesData);
         });
         
         // Initialize on page load
